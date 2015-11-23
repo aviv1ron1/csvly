@@ -1,0 +1,24 @@
+{
+    "name": "csvly",
+    "version": "0.0.1",
+    "description": "parse csv files line by line",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/aviv1ron1/csvly.git"
+    },
+    "author": {
+        "name": "Aviv Ron",
+        "email": "aviv1ron1@gmail.com"
+    },
+    "dependencies": {
+        "readly": "*"
+    },
+    "keywords": [
+        "csv",
+        "line",
+        "read",
+        "comma seperated values"
+    ],
+    "main": "index.js",
+    "license": "MIT"
+}
