@@ -31,15 +31,16 @@ line will be emitted once as: `{ '0': 'one', '1': 'two', '2': 'three' }`
 In addition csvly has the following convenient methods:
 
 `readAll()` reads all lines from the file
+
 `readFirst(count)` read the first `count` rows from the begining of the file
 
 ### opts
-csvly receives an object opts as the second argument which can contain:
+csvly receives an options object as the second argument to its constructor which can contain:
 
-* **encoding** - optional, default is utf8
-* **eol** - optional end of line char, default is OS newline
-* **headers** - optioanl array of values to use as csv headers. If given they will be the key's to the parsed object properties
-* **firstLineIsHeaders** - optioanl boolean. Whether to use the first line as headers. If true it will be the key's to the parsed object properties. This option can not be given together with the header option - only one of them may be included in the opts, otherwise an error is thrown.
+* `encoding` - optional, default is utf8
+* `eol` - optional end of line char, default is OS newline
+* `headers` - optioanl array of values to use as csv headers. If given they will be the key's to the parsed object properties
+* `firstLineIsHeaders` - optioanl boolean. Whether to use the first line as headers. If true it will be the key's to the parsed object properties. This option can not be given together with the header option - only one of them may be included in the opts, otherwise an error is thrown.
 
 ### example given headers array:
 ```javascript
