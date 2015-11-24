@@ -1,18 +1,18 @@
-var Readly = require('readly');
+var csv = require('csv');
 var util = require("util");
 var EventEmitter = require("events").EventEmitter;
-
-var parseCsv = function(line) {
-    var obj = {};
-    var i = 0;
-    line.split(',').forEach(function(v) {
-        obj[i++] = v;
-    });
-    return obj;
-}
+var fs = require('fs');
 
 function Csvly(filename, opts) {
     EventEmitter.call(this);
+    try {
+        stats = fs.lstatSync(filename);
+        if (!stats.isFile()) {
+            throw new Error("filename is a directory name, not a file. " + filename);
+        }
+    } catch (e) {
+        throw new Error("file does not exist " + filename);
+    }
     this.filename = filename;
     if (opts) {
         this.encoding = opts.encoding;
@@ -23,48 +23,86 @@ function Csvly(filename, opts) {
     if (this.headers && this.firstLineIsHeaders) {
         throw new Error("opts must include either headers or firstLineIsHeaders option. cannot contain both");
     }
+    this.parserOpts = {};
     if (this.firstLineIsHeaders) {
-        var self = this;
-        reader = new Readly(this.filename, this.encoding, this.eol);
-        reader.on('line', function(line) {
-            self.headers = parseCsv(line);
-        });
-        reader.read(0, 1);
+        this.parserOpts.columns = true;
+    }
+    if (this.eol) {
+        this.parserOpts.rowDelimiter = eol;
     }
     if (this.headers) {
-        var hdr = {};
-        var i = 0;
-        this.headers.forEach(function(h) {
-            hdr[i++] = h;
-        });
-        this.headers = hdr;
+        this.parserOpts.columns = opts.headers;
     }
+
 }
 
 util.inherits(Csvly, EventEmitter);
 
 Csvly.prototype.read = function(start, count) {
     var self = this;
-    this.reader = new Readly(this.filename, this.encoding, this.eol);
-    self.reader.on('line', function(line) {
-        var obj = {};
-        var i = 0;
-        line.split(',').forEach(function(v) {
-            if (self.headers) {
-                obj[self.headers[i++]] = v;
-            } else {
-                obj[i++] = v;
-            }
-        });
-        self.emit("line", obj);
-    });
-    self.reader.on('end', function() {
-        self.emit('end');
-    });
-    if (self.firstLineIsHeaders && start == 0) {
-        start = 1;
+    this.stream;
+    var shouldContinue = true;
+    if (!start) {
+        start = 0;
     }
-    self.reader.read(start, count);
+
+    function handleData(d) {
+        //console.log("handledata", start, count);
+        if (start > 0) {
+            start--;
+        } else {
+            if (typeof count !== 'undefined') {
+                if (count > 0) {
+                    count--;
+                    self.emit("line", d);
+                } else {
+                    count = 1;
+                    shouldContinue = false;
+                    self.parser.end();
+                    self.emit("end");
+                    //self.stream.close();
+                }
+            } else {
+                self.emit("line", d);
+            }
+        }
+    }
+
+    if (!this.headers && !this.firstLineIsHeaders) {
+        this.parserOpts.columns = function(line) {
+            var hdrs = [];
+            var obj = {};
+            for (var i = 0; i < line.length; i++) {
+                hdrs.push(i);
+                obj[i] = line[i];
+            };
+            handleData(obj);
+            return hdrs;
+        }
+    }
+
+    this.parser = csv.parse(this.parserOpts);
+
+    this.parser.on('readable', function() {
+        //console.log("readable")
+        data = self.parser.read();
+        //console.log("data", data)
+        while (shouldContinue && data) {
+            handleData(data)
+            if (shouldContinue) {
+                data = self.parser.read();
+            }
+        }
+    });
+    self.parser.on('finish', function() {
+        if (shouldContinue) {
+            self.emit('end');
+        }
+    });
+    this.stream = fs.createReadStream(this.filename, {
+        encoding: this.encoding
+    });
+    this.stream.pipe(this.parser);
 }
 
 Csvly.prototype.readAll = function() {
