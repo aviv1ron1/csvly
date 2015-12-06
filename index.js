@@ -5,20 +5,25 @@ var fs = require('fs');
 
 function Csvly(filename, opts) {
     EventEmitter.call(this);
-    try {
-        stats = fs.lstatSync(filename);
-        if (!stats.isFile()) {
-            throw new Error("filename is a directory name, not a file. " + filename);
-        }
-    } catch (e) {
-        throw new Error("file does not exist " + filename);
-    }
-    this.filename = filename;
     if (opts) {
         this.encoding = opts.encoding;
         this.eol = opts.eol;
         this.headers = opts.headers;
         this.firstLineIsHeaders = opts.firstLineIsHeaders;
+    }
+    if (typeof filename === "string") {
+        try {
+            stats = fs.lstatSync(filename);
+            if (!stats.isFile()) {
+                throw new Error("filename is a directory name, not a file. " + filename);
+            }
+        } catch (e) {
+            throw new Error("file does not exist " + filename);
+        }
+        this.filename = filename;
+    } else {
+        this.stream = filename;
+        this.stream.setEncoding(this.encoding);
     }
     if (this.headers && this.firstLineIsHeaders) {
         throw new Error("opts must include either headers or firstLineIsHeaders option. cannot contain both");
@@ -40,7 +45,6 @@ util.inherits(Csvly, EventEmitter);
 
 Csvly.prototype.read = function(start, count) {
     var self = this;
-    this.stream;
     var shouldContinue = true;
     if (!start) {
         start = 0;
@@ -99,9 +103,11 @@ Csvly.prototype.read = function(start, count) {
             self.emit('end');
         }
     });
-    this.stream = fs.createReadStream(this.filename, {
-        encoding: this.encoding
-    });
+    if (util.isNullOrUndefined(this.stream)) {
+        this.stream = fs.createReadStream(this.filename, {
+            encoding: this.encoding
+        });
+    }
     this.stream.pipe(this.parser);
 }
 
