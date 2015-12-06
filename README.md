@@ -7,10 +7,11 @@ uses [readly](https://www.npmjs.com/package/readly) to read line by line from th
 ## usage
 ### ctor
 
-Csvly(input,options)
+`new Csvly(input,options)`
 
-input - receives either a path to a file or a stream
-options - optional object with options, see below for all options
+`input` - receives either a path to a file or a stream
+
+`options` - optional object with options, see [below](#opts) for all options
 
 example with path:
 ```javascript
@@ -18,7 +19,7 @@ var Csvly = require("csvly");
 var reader = new Csvly("test.csv");
 ```
 
-example with path:
+example with stream:
 ```javascript
 var fs = require('fs');
 var Csvly = require("csvly");
@@ -28,7 +29,7 @@ var reader = new Csvly(strm);
 
 ### read
 
-read(start, count) receives
+`read(start, count)`
 
 `start` - optional number, from which row to start reading (how many lines to skip from the begining) 
 
