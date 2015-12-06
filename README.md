@@ -4,8 +4,31 @@
 
 read csv files line by line
 uses [readly](https://www.npmjs.com/package/readly) to read line by line from the given file and fires an event for each parsed line
-## usage:
-read receives
+## usage
+### ctor
+
+Csvly(input,options)
+
+input - receives either a path to a file or a stream
+options - optional object with options, see below for all options
+
+example with path:
+```javascript
+var Csvly = require("csvly");
+var reader = new Csvly("test.csv");
+```
+
+example with path:
+```javascript
+var fs = require('fs');
+var Csvly = require("csvly");
+var strm = fs.createReadStream("test.csv");
+var reader = new Csvly(strm);
+```
+
+### read
+
+read(start, count) receives
 
 `start` - optional number, from which row to start reading (how many lines to skip from the begining) 
 
