@@ -33,7 +33,7 @@ function Csvly(filename, opts) {
         this.parserOpts.columns = true;
     }
     if (this.eol) {
-        this.parserOpts.rowDelimiter = eol;
+        this.parserOpts.rowDelimiter = this.eol;
     }
     if (this.headers) {
         this.parserOpts.columns = opts.headers;
