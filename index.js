@@ -10,6 +10,7 @@ function Csvly(filename, opts) {
         this.eol = opts.eol;
         this.headers = opts.headers;
         this.firstLineIsHeaders = opts.firstLineIsHeaders;
+        this.array = opts.array;
     }
     if (typeof filename === "string") {
         try {
@@ -38,7 +39,6 @@ function Csvly(filename, opts) {
     if (this.headers) {
         this.parserOpts.columns = opts.headers;
     }
-
 }
 
 util.inherits(Csvly, EventEmitter);
@@ -72,7 +72,7 @@ Csvly.prototype.read = function(start, count) {
         }
     }
 
-    if (!this.headers && !this.firstLineIsHeaders) {
+    if (!this.headers && !this.firstLineIsHeaders && !this.array) {
         this.parserOpts.columns = function(line) {
             var hdrs = [];
             var obj = {};
