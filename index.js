@@ -11,6 +11,7 @@ function Csvly(filename, opts) {
         this.headers = opts.headers;
         this.firstLineIsHeaders = opts.firstLineIsHeaders;
         this.array = opts.array;
+		this.customOpts = opts.custom;
     }
     if (typeof filename === "string") {
         try {
@@ -39,6 +40,11 @@ function Csvly(filename, opts) {
     if (this.headers) {
         this.parserOpts.columns = opts.headers;
     }
+	if(this.customOpts) {
+		for(var opt in this.customOpts) {
+			this.parserOpts[opt] = this.customOpts[opt];
+		}
+	}
 }
 
 util.inherits(Csvly, EventEmitter);

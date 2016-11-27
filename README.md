@@ -66,6 +66,7 @@ csvly receives an options object as the second argument to its constructor which
 * `headers` - optioanl array of values to use as csv headers. If given they will be the key's to the parsed object properties
 * `firstLineIsHeaders` - optioanl boolean. Whether to use the first line as headers. If true it will be the key's to the parsed object properties. This option can not be given together with the header option - only one of them may be included in the opts, otherwise an error is thrown.
 * `array` - optional boolean. If true line event will emit data as an array instead of an object
+* `custom` - optional object. If included will pass these options to the parser. Can include options such as qoute, trim etc...
 
 ### example given headers array:
 ```javascript
