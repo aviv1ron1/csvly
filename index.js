@@ -109,6 +109,9 @@ Csvly.prototype.read = function(start, count) {
             self.emit('end');
         }
     });
+    self.parser.on('error', (err) => {
+        self.emit('error', err);
+    });
     if (util.isNullOrUndefined(this.stream)) {
         this.stream = fs.createReadStream(this.filename, {
             encoding: this.encoding
