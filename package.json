@@ -1,6 +1,6 @@
 {
     "name": "csvly",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "parse csv files line by line",
     "repository": {
         "type": "git",
@@ -11,7 +11,7 @@
         "email": "aviv1ron1@gmail.com"
     },
     "dependencies": {
-        "csv": "^0.4.6"
+        "csv": "^5.1.3"
     },
     "keywords": [
         "csv",

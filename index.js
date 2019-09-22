@@ -11,7 +11,7 @@ function Csvly(filename, opts) {
         this.headers = opts.headers;
         this.firstLineIsHeaders = opts.firstLineIsHeaders;
         this.array = opts.array;
-		this.customOpts = opts.custom;
+        this.customOpts = opts.custom;
     }
     if (typeof filename === "string") {
         try {
@@ -40,11 +40,11 @@ function Csvly(filename, opts) {
     if (this.headers) {
         this.parserOpts.columns = opts.headers;
     }
-	if(this.customOpts) {
-		for(var opt in this.customOpts) {
-			this.parserOpts[opt] = this.customOpts[opt];
-		}
-	}
+    if (this.customOpts) {
+        for (var opt in this.customOpts) {
+            this.parserOpts[opt] = this.customOpts[opt];
+        }
+    }
 }
 
 util.inherits(Csvly, EventEmitter);
@@ -57,7 +57,7 @@ Csvly.prototype.read = function(start, count) {
     }
 
     function handleData(d) {
-        //console.log("handledata", start, count);
+        // console.log("handledata", start, count);
         if (start > 0) {
             start--;
         } else {
@@ -83,7 +83,7 @@ Csvly.prototype.read = function(start, count) {
             var hdrs = [];
             var obj = {};
             for (var i = 0; i < line.length; i++) {
-                hdrs.push(i);
+                hdrs.push(i.toString());
                 obj[i] = line[i];
             };
             handleData(obj);
@@ -104,7 +104,8 @@ Csvly.prototype.read = function(start, count) {
             }
         }
     });
-    self.parser.on('finish', function() {
+    self.parser.on('end', function() {
+        //console.log("end");
         if (shouldContinue) {
             self.emit('end');
         }
